@@ -5,9 +5,9 @@ import sys
 #sys.stdout = open("smapout.txt","w")
 A = []
 for line in sys.stdin:
-  key, val = line.strip().split('\t', 1)
-  A.append([key,val])
+  route, zona, num = line.strip().split('\t')
+  A.append([ route, zona, num])
 
-A.sort(key=lambda tup: tup[0])
-for el in A:
-  print("%s\t%s" % (el[0], el[1]))
+sorted_data = sorted(A, key=lambda x: (int(x[0]), x[1]))
+for el in sorted_data:
+  print("%s\t%s\t%s" % (el[0], el[1], el[2]))

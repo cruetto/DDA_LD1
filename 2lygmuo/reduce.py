@@ -1,38 +1,40 @@
-#!/usr/bin/env python
-
 import sys
 
-#sys.stdin = open("smapout.txt","r")
-#sys.stdout = open("redout.txt","w")
+overall_zona = ""
+overall_route = ""
+overall_num = 0
 
-current_word = None
-current_count = 0
-word = None
 
 # input comes from STDIN
 for line in sys.stdin:
     # remove leading and trailing whitespace
     line = line.strip()
     # parse the input we got from mapper.py
-    word, count = line.split('\t', 1)
-    # convert count (currently a string) to int
-    try:
-        count = int(count)
-    except ValueError:
-        # count was not a number, so silently
-        # ignore/discard this line
-        continue
-    # this IF-switch only works because Hadoop sorts map output
-    # by key (here: word) before it is passed to the reducer
-    if current_word == word:
-        current_count += count
-    else:
-        if current_word != None:
-            # write result to STDOUT
-            print ('%s\t%s' % (current_word, current_count))
-        current_count = count
-        current_word = word
+    current_route, current_zona, current_num = line.split('\t')
 
-# do not forget to output the last word if needed!
-if current_word == word:
-    print ('%s\t%s' % (current_word, current_count))
+    # Check for incorrect data
+    try:
+        current_num = int(current_num)
+
+    except:
+        continue
+    
+    # if every variable was initialised
+    isNotNone = (overall_zona != "" and overall_route != "")
+
+    if overall_route == current_route and overall_zona == current_zona:
+        
+        overall_num += current_num
+
+    else:
+        # if keys changed: print and input new values
+        if isNotNone:
+            print(f"{overall_route}\t{overall_zona}\t{overall_num}")
+        overall_route = current_route
+        overall_zona = current_zona
+        overall_num = 0
+
+# input last values
+if isNotNone:
+    print(f"{overall_route}\t{overall_zona}\t{overall_num}")
+
